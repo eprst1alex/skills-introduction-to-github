@@ -1,12 +1,14 @@
 import unittest
+from unittest.mock import DEFAULT
 
 from selenium import webdriver
+from selenium.common import TimeoutException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
-
+from constant import DEFAULT_WAIT_TIMEOUT
 
 
 class LoginTestCase(unittest.TestCase):
@@ -26,49 +28,54 @@ class LoginTestCase(unittest.TestCase):
         # Открытие страницы
         self.web.get('https://www.saucedemo.com')
 
-
     def test_login_failed(self):
-        # Ввод логина
-        username_field = WebDriverWait(self.web, 10).until(
-            EC.presence_of_element_located((By.ID, 'user-name'))
-        )
-        username_field.send_keys('standard_user')
+        """Проверка неудачного входа в систему."""
 
-        # Ввод пароля
-        password_field = self.web.find_element(By.ID, 'password')
-        password_field.send_keys('wrong_pass')
+        try:
+            # Ввод логина
+            username_field = WebDriverWait(self.web, 10).until(
+                EC.presence_of_element_located((By.ID, 'user-name'))
+            )
+            username_field.send_keys('standard_user')
 
-        # Нажатие кнопки логина
-        login_button = self.web.find_element(By.ID, 'login-button')
-        login_button.click()
+            # Ввод пароля
+            password_field = self.web.find_element(By.ID, 'password')
+            password_field.send_keys('wrong_pass')
+            # wrong_pass
 
-        # Вывод ошибки
-        error_box = self.web.find_element(By.CLASS_NAME, 'error-button')
-        print(error_box.text)
+            # Нажатие кнопки логина
+            login_button = self.web.find_element(By.ID, 'login-button')
+            login_button.click()
+
+            WebDriverWait(self.web, DEFAULT_WAIT_TIMEOUT).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'error-button'))
+            )
+
+        except TimeoutException as e:
+            self.fail(f"Test test_login_failed Failed")
 
     def test_login_success(self):
-        # Ввод логина
-        username_field = WebDriverWait(self.web, 10).until(
-            EC.presence_of_element_located((By.ID, 'user-name'))
-        )
-        username_field.send_keys('standard_user')
+        try:
+            # Ввод логина
+            username_field = WebDriverWait(self.web, DEFAULT_WAIT_TIMEOUT).until(
+                EC.presence_of_element_located((By.ID, 'user-name'))
+            )
+            username_field.send_keys('standard_user')
 
-        # Ввод пароля
-        password_field = self.web.find_element(By.ID, 'password')
-        password_field.send_keys('secret_sauce')
+            # Ввод пароля
+            password_field = self.web.find_element(By.ID, 'password')
+            password_field.send_keys('secret_sauce')
 
-        # Нажатие кнопки логина
-        login_button = self.web.find_element(By.ID, 'login-button')
-        login_button.click()
+            # Нажатие кнопки логина
+            login_button = self.web.find_element(By.ID, 'login-button')
+            login_button.click()
 
-        # Ожидание загрузки страницы с товарами
-        inventory_items = WebDriverWait(self.web, 5).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, 'inventory_item'))
-        )
+            # Ожидание загрузки страницы с товарами
+            inventory_items = WebDriverWait(self.web, 5).until(
+                EC.presence_of_all_elements_located((By.CLASS_NAME, 'inventory_item'))
+            )
 
-        # Проверка, что количество товаров на странице больше нуля
-        self.assertGreater(len(inventory_items), 0, "Товары не найдены на странице после входа")
-
-
-
-
+            # Проверка, что количество товаров на странице больше нуля
+            self.assertGreater(len(inventory_items), 0, "Товары не найдены на странице после входа")
+        except:
+            self.fail("Test test_login_success Failed")
