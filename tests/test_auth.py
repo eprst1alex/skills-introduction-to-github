@@ -32,6 +32,7 @@ class LoginTestCase(unittest.TestCase):
         """Проверка неудачного входа в систему."""
 
         try:
+            success = True
             # Ввод логина
             username_field = WebDriverWait(self.web, 10).until(
                 EC.presence_of_element_located((By.ID, 'user-name'))
@@ -52,10 +53,14 @@ class LoginTestCase(unittest.TestCase):
             )
 
         except TimeoutException as e:
+            success = False
+
+        if not success:
             self.fail(f"Test test_login_failed Failed")
 
     def test_login_success(self):
         try:
+            success = True
             # Ввод логина
             username_field = WebDriverWait(self.web, DEFAULT_WAIT_TIMEOUT).until(
                 EC.presence_of_element_located((By.ID, 'user-name'))
@@ -78,4 +83,7 @@ class LoginTestCase(unittest.TestCase):
             # Проверка, что количество товаров на странице больше нуля
             self.assertGreater(len(inventory_items), 0, "Товары не найдены на странице после входа")
         except:
+            success = False
+
+        if not success:
             self.fail("Test test_login_success Failed")
