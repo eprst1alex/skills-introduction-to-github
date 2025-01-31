@@ -25,22 +25,23 @@ class TestGitHubAPICase(unittest.TestCase):
 
         self.user_name = user_name
 
-    def test_create_public_repo(self, repo_name, description="Test repository created with API"):
+    def test_create_public_repo(self):
         """Создает публичный репозиторий на GitHub."""
+
         url = f"{API_URL}/user/repos"
         headers = {
             "Authorization": f"token {self.token}",
             "Content-Type": "application/json",
         }
         data = {
-            "name": repo_name,
-            "description": description,
+            "name": self.TEST_REPO_NAME,
+            "description": "Test repository created with API",
             "private": False,
             "auto_init": True,
         }
         response = requests.post(url, headers=headers, json=data)
 
-        self.assertEqual(response.status_code, 201,
+        self.assertEqual(response.status_code, 201,-
                          f"Failed to create repository. Response code: {response.status_code} Response: {response.text}")
 
         self.assertEqual(response.json()["private"], False, "Repository should be public.")
