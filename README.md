@@ -1,62 +1,73 @@
 <header>
 
-<!--
-  <<< Author notes: Course header >>>
-  Include a 1280×640 image, course title in sentence case, and a concise description in emphasis.
-  In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
-  Add your open source license, GitHub uses MIT license.
--->
+# Introduction 
 
-# Introduction to GitHub 44444
-
-_Get started using GitHub in less than an hour._
+_Краткое описание API._
 
 </header>
 
-<!--
-  <<< Author notes: Step 3 >>>
-  Just a historic note: the previous version of this step forced the learner
-  to write a pull request description,
-  checked that `main` was the receiving branch,
-  and that the file was named correctly.
--->
+## GitHubAPI: Create public repository
 
-## Step 3: Open a pull request
+**Метод:** `POST`
 
-_Nice work making that commit! :sparkles:_
+**URL:** `/user/repos` или `/orgs/{org}/repos`
 
-Now that you have made a change to the project and created a commit, it’s time to share your proposed change through a pull request!
+*   `/user/repos` - для создания репозитория в аккаунте пользователя.
+*   `/orgs/{org}/repos` - для создания репозитория в организации, где `{org}` нужно заменить на имя организации.
 
-**What is a pull request?**: Collaboration happens on a _[pull request](https://docs.github.com/en/get-started/quickstart/github-glossary#pull-request)_. The pull request shows the changes in your branch to other people and allows people to accept, reject, or suggest additional changes to your branch. In a side by side comparison, this pull request is going to keep the changes you just made on your branch and propose applying them to the `main` project branch. For more information about pull requests, see "[About pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)".
+**Аутентификация:**
 
-### :keyboard: Activity: Create a pull request
+*   Необходим токен доступа (Personal Access Token) с правом `repo`.
+*   Токен передаётся в заголовке `Authorization: token YOUR_TOKEN`.
 
-You may have noticed after your commit that a message displayed indicating your recent push to your branch and providing a button that says **Compare & pull request**.
+**Тело запроса (JSON):**
 
-![screenshot of message and button](/images/compare-and-pull-request.png)
+```json
+{
+  "name": "имя-вашего-репозитория",
+  "description": "описание-вашего-репозитория",
+  "homepage": "адрес-вашего-сайта (необязательно)",
+  "private": false,
+  "has_issues": true,
+  "has_projects": true,
+  "has_wiki": true,
+  "is_template": false
+}
+```
 
-To create a pull request automatically, click **Compare & pull request**, and then skip to step 6 below. If you don't click the button, the instructions below walk you through manually setting up the pull request.
+**Параметры в теле запроса:**
 
-1. Click on the **Pull requests** tab in the header menu of your repository.
-2. Click **New pull request**.
-3. In the **base:** dropdown, make sure **main** is selected.
-4. Select the **compare:** dropdown, and click `my-first-branch`.
+*   `name` (обязательно): Имя репозитория.
+*   `description` (необязательно): Описание репозитория.
+*   `homepage` (необязательно): URL домашней страницы проекта.
+*   `private` (обязательно): `true` для приватного репозитория, `false` для публичного. В вашем случае должно быть `false`.
+*   `has_issues` (необязательно): `true` для включения Issue Tracker, `false` для выключения. По умолчанию `true`.
+*   `has_projects` (необязательно): `true` для включения Projects, `false` для выключения. По умолчанию `true`.
+*   `has_wiki` (необязательно): `true` для включения Wiki, `false` для выключения. По умолчанию `true`.
+*   `is_template` (необязательно): `true` для создания репозитория-шаблона, `false` для обычного репозитория. По умолчанию `false`.
 
-   ![screenshot showing both branch selections](/images/pull-request-branches.png)
+**Пример запроса (cURL):**
 
-5. Click **Create pull request**.
-6. Enter a title for your pull request. By default, the title will automatically be the name of your branch. For this exercise, let's edit the field to say `Add my first file`.
-7. The next field helps you provide a description of the changes you made. Here, you can add a description of what you’ve accomplished so far. As a reminder, you have: created a new branch, created a file, and made a commit.
+```bash
+curl \
+  -H "Authorization: token YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "my-new-public-repo",
+    "description": "This is a test repository created via API",
+    "private": false
+  }' \
+  https://api.github.com/user/repos
+```
 
-   ![screenshot showing pull request](/images/Pull-request-description.png)
+**Важные замечания:**
 
-8. Click **Create pull request**. You will automatically be navigated to your new pull request.
-9. Wait about 20 seconds then refresh this page (the one you're following instructions from). [GitHub Actions](https://docs.github.com/en/actions) will automatically update to the next step.
+*   Замените `YOUR_TOKEN` на ваш токен доступа.
+*   Замените `"my-new-public-repo"` на желаемое имя репозитория.
+*   Не забудьте настроить другие параметры по необходимости.
+*   Успешный запрос вернет HTTP-статус `201 Created` и JSON с информацией о созданном репозитории.
+*   Возможные ошибки: проверьте статус-коды ответа (например, `401 Unauthorized` - неверный токен, `422 Unprocessable Entity` - ошибка в теле запроса).
 
-> [!NOTE]
-> You may see evidence of GitHub Actions running on the tab with the pull request opened! The image below shows a line you might see on your pull request after the Action finishes running.
-> 
-> ![screenshot of an example of an actions line](/images/Actions-to-step-4.png)
 
 <footer>
 
