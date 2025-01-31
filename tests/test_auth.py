@@ -87,3 +87,6 @@ class LoginTestCase(unittest.TestCase):
 
         if not success:
             self.fail("Test test_login_success Failed")
+
+    def tearDown(self):
+        self.web.quit()
