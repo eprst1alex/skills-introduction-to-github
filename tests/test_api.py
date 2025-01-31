@@ -18,6 +18,13 @@ class TestGitHubAPICase(unittest.TestCase):
 
         self.token = token
 
+        user_name = config("GITHUB_USERNAME", cast=str, default="none")
+
+        if user_name == 'none':
+            raise ValueError("GITHUB_USERNAME environment variable not set.")
+
+        self.user_name = user_name
+
     def test_create_public_repo(self, repo_name, description="Test repository created with API"):
         """Создает публичный репозиторий на GitHub."""
         url = f"{API_URL}/user/repos"
@@ -50,18 +57,17 @@ class TestGitHubAPICase(unittest.TestCase):
 #         self.assertEqual(response.json()["private"], False, "Repository should be public.")
 #         self.assertEqual(response.json()["name"], self.TEST_REPO_NAME, "Repository name does not match.")
 #
-#     def test_delete_created_repo(self):
-#         """Тест удаления созданного репозитория."""
-#         create_response = github_api.create_repo(self.TEST_REPO_NAME)
-#
-#         if create_response.status_code != 201:
-#             self.fail(f"Failed to create repository, cannot test delete. Response: {create_response.text}")
-#
-#         delete_response = github_api.delete_repo(self.TEST_REPO_NAME)
-#
-#         self.assertEqual(delete_response.status_code, 204,
-#                          f"Failed to delete repository. Response code: {delete_response.status_code} Response: {delete_response.text}")
-#
+    def test_delete_created_repo(self):
+        """Тест удаления созданного репозитория."""
+        url = f"{API_URL}/repos/{self.user_name}/{self.TEST_REPO_NAME}"
+        headers = {
+            "Authorization": f"token {self.token}"
+        }
+        delete_response = requests.delete(url, headers=headers)
+
+        self.assertEqual(delete_response.status_code, 204,
+                         f"Failed to delete repository. Response code: {delete_response.status_code} Response: {delete_response.text}")
+
 #     @classmethod
 #     def tearDownClass(cls):
 #         # При завершении тестов удалим созданный репозиторий (если он был создан)

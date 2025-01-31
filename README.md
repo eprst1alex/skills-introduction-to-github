@@ -60,26 +60,75 @@ curl \
   https://api.github.com/user/repos
 ```
 
+## GitHubAPI: Delete public repository
+
+
+**Метод:** `DELETE`
+
+**URL:** `/repos/{owner}/{repo}`
+
+*   `{owner}`: Имя пользователя или организации, владеющей репозиторием.
+*   `{repo}`: Имя репозитория, который нужно удалить.
+
+**Аутентификация:**
+
+*   Необходим токен доступа (Personal Access Token) с правами `repo`.
+*   Токен передается в заголовке `Authorization: token YOUR_TOKEN`.
+
+**Тело запроса:**
+
+*   У запроса на удаление репозитория **нет** тела.
+
+**Пример запроса (cURL):**
+
+```bash
+curl \
+  -H "Authorization: token YOUR_TOKEN" \
+  -X DELETE \
+  https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO
+```
+
+**Пример запроса (Python с библиотекой `requests`):**
+
+```python
+import requests
+
+token = "YOUR_TOKEN"
+username = "YOUR_USERNAME"
+repo_name = "YOUR_REPO"
+headers = {
+    "Authorization": f"token {token}",
+}
+url = f"https://api.github.com/repos/{username}/{repo_name}"
+
+response = requests.delete(url, headers=headers)
+
+if response.status_code == 204:
+    print("Репозиторий успешно удален!")
+else:
+    print(f"Ошибка удаления репозитория: {response.status_code}")
+    print(response.text)
+```
+
 **Важные замечания:**
 
 *   Замените `YOUR_TOKEN` на ваш токен доступа.
-*   Замените `"my-new-public-repo"` на желаемое имя репозитория.
-*   Не забудьте настроить другие параметры по необходимости.
-*   Успешный запрос вернет HTTP-статус `201 Created` и JSON с информацией о созданном репозитории.
-*   Возможные ошибки: проверьте статус-коды ответа (например, `401 Unauthorized` - неверный токен, `422 Unprocessable Entity` - ошибка в теле запроса).
+*   Замените `YOUR_USERNAME` на имя пользователя или организации, владеющей репозиторием.
+*   Замените `YOUR_REPO` на имя репозитория, который нужно удалить.
+*   Успешный запрос вернет HTTP-статус `204 No Content`.
+*   Удаление репозитория - это **безвозвратная операция**. Будьте осторожны, используя этот API.
+*   Возможные ошибки:
+    *   `401 Unauthorized`: Неверный или отсутствующий токен.
+    *   `404 Not Found`: Репозиторий не найден.
+    *   `403 Forbidden`: Недостаточно прав для удаления репозитория.
+*   Нельзя удалить репозиторий, если он является шаблоном и используется в качестве шаблона в других репозиториях.
+*   У пользователя, который удаляет репозиторий, должны быть права администратора в этом репозитории.
+
+**Ссылки на официальную документацию:**
+
+*   [Delete a repository](https://docs.github.com/en/rest/repos/repos#delete-a-repository)
 
 
 <footer>
-
-<!--
-  <<< Author notes: Footer >>>
-  Add a link to get support, GitHub status page, code of conduct, license link.
--->
-
----
-
-Get help: [Post in our discussion board](https://github.com/orgs/skills/discussions/categories/introduction-to-github) &bull; [Review the GitHub status page](https://www.githubstatus.com/)
-
-&copy; 2024 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
 
 </footer>
